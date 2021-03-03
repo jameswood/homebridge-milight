@@ -1,6 +1,7 @@
 var Milight = require("node-milight-promise").MilightController;
 var helper = require("node-milight-promise").helper;
 var inherits = require('util').inherits;
+var reselectBulb = false;
 
 "use strict";
 
@@ -89,7 +90,8 @@ MiLightPlatform.prototype.accessories = function(callback) {
                   type: bridgeConfig.version,
                   fullSync: bridgeConfig.fullSync || false,
                   sendKeepAlives: bridgeConfig.sendKeepAlives,
-                  sessionTimeout: bridgeConfig.sessionTimeout
+                  sessionTimeout: bridgeConfig.sessionTimeout,
+                  reselectBulb: bridgeConfig.reselectBulb
                 });
 
                 // Attach the right commands to the bridgeController object
@@ -177,7 +179,7 @@ function MiLightAccessory(bulbConfig, bridgeController, log) {
 
 MiLightAccessory.prototype.setPowerState = function(powerOn, callback) {
   if (powerOn) {
-    if (this.lastSent.bulb === this.type + this.zone) {
+    if (this.lastSent.bulb === this.type + this.zone && reselectBulb == false) {
       this.log.debug("[" + this.name + "] Omitting 'on' command as we've sent it to this bulb most recently");
     } else {
       this.log("[" + this.name + "] Setting power state to on");
